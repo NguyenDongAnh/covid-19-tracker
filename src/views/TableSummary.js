@@ -1,9 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     numberWithCommas,
-    getSmallCountryFlag,
-    getMediumCountryFlag,
-    formatDateTime
 } from "../services"
 import Pagination from './Pagination'
 export default function TableSummary({ countrySummaryList }) {

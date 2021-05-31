@@ -1,21 +1,19 @@
 import React, { useState,useEffect } from 'react';
 import {
     numberWithCommas,
-    getSmallCountryFlag,
-    getMediumCountryFlag,
     formatDateTime
 } from "../services"
 
 import Pagination from './Pagination'
 
-export default function TableCountrySummary({ dataCountry}) {
+export default function TableStatisticsCountry({ dataCountry}) {
     let [currentTable, setCurrentTable] = useState(1);
-    let [rowsPerTable, setRowPerTable] = useState(15)
+    let [rowsPerTable] = useState(15)
 
     const indexOfLastRow = currentTable * rowsPerTable;
     const indextOfFirstRow = indexOfLastRow - rowsPerTable;
     const currentDataCountry = dataCountry.slice(indextOfFirstRow, indexOfLastRow)
-    const renderTableCountrySummary = (source) => {
+    const renderTableStatisticsCountry = (source) => {
         return source.map((row, index) => {
             return (
                 <tr key={index}>
@@ -70,7 +68,7 @@ export default function TableCountrySummary({ dataCountry}) {
                     </tr>
                 </thead>
                 <tbody>
-                    {renderTableCountrySummary(currentDataCountry)}
+                    {renderTableStatisticsCountry(currentDataCountry)}
                 </tbody>
             </table>
             <Pagination currentTable={currentTable} rowsPerTable={rowsPerTable} totalRows={dataCountry.length} onChangeTable={onChangeTable} />

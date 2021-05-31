@@ -30,10 +30,73 @@ const getDaysRange = (days) => {
     }
 }
 
+const renderConfirmedCountry = (data) => {
+    let dataCase = [];
+    data.map(element => {
+        dataCase.push(element.Confirmed);
+    })
+    return dataCase;
+}
+const renderRecoveredCountry = (data) => {
+    let dataCase = [];
+    data.map(element => dataCase.push(element.Recovered))
+    return dataCase;
+}
+const renderDeathsCountry = (data) => {
+    let dataCase = [];
+    data.map(element => dataCase.push(element.Deaths))
+    return dataCase
+}
+const renderConfirmedWorld = (data) => {
+    let dataCase = [];
+    data.map(element => {
+        dataCase.push(element.TotalConfirmed);
+    })
+    return dataCase;
+}
+const renderRecoveredWorld = (data) => {
+    let dataCase = [];
+    data.map(element => {
+        dataCase.push(element.TotalRecovered);
+    })
+    return dataCase;
+}
+const renderDeathsWorld = (data) => {
+    let dataCase = [];
+    data.map(element => {
+        dataCase.push(element.TotalDeaths);
+    })
+    return dataCase
+}
+
+const renderLabels = (data) => {
+    let labels = [];
+    data.map(element => {
+        labels.push(formatDateTime(new Date(element.Date)));
+    })
+    return labels
+}
+function sortDate(c) {
+    let k = [...c];
+    return k.sort((a, b) => a.Date > b.Date ? 1 : -1)
+}
+function sortConfirmed(c) {
+    let k = [...c];
+    return k.sort((a, b) => a.TotalConfirmed < b.TotalConfirmed ? 1 : -1)
+}
 export{
     numberWithCommas,
     getSmallCountryFlag,
     getMediumCountryFlag,
     formatDateTime,
-    getDaysRange
+    getDaysRange,
+    renderConfirmedCountry,
+    renderRecoveredCountry,
+    renderDeathsCountry,
+    renderConfirmedWorld,
+    renderRecoveredWorld,
+    renderDeathsWorld,
+    renderLabels,
+    sortDate,
+    sortConfirmed
 }

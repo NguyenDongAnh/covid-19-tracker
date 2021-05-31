@@ -1,4 +1,4 @@
-import React, { usetEffect } from 'react'
+import React from 'react'
 
 export default function Pagination({ currentTable, rowsPerTable, totalRows, onChangeTable }) {
     let pageNumbers = [];
@@ -6,10 +6,6 @@ export default function Pagination({ currentTable, rowsPerTable, totalRows, onCh
     for (let i = 1; i <= totalTable; i++) {
         pageNumbers.push(i)
     }
-
-    // usetEffect(()=>{
-
-    // },[currentTable])
 
     return (
         <div className="pagination">
