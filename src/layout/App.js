@@ -230,7 +230,7 @@ export default function App() {
             {Object.keys(country).length !== 0 ? <Counter country={country} /> : (Object.keys(summary).length !== 0 ? <Counter country={summary} /> : '')}
             <div className="container f-width">
                 <div className="row">
-                    <div className="col-8 col-sm-12 m-0">
+                    <div className="col-8 col-sm-12 p-0 m-0">
                         <div className="row m-0">
                             <div className="col-12">
                                 <div className="box">
