@@ -29,10 +29,10 @@ import TableSummary from '../views/TableSummary';
 import TableStatisticsWorld from '../views/TableStatisticsWorld';
 import TopCountriesMenu from '../views/TopCountriesMenu';
 import Counter from '../views/Counter';
-let renderCount = 0
+// let renderCount = 0
 export default function App() {
-    renderCount++;
-    console.log(renderCount)
+    // renderCount++;
+    // console.log(renderCount)
     let [summary, setSummary] = useState({});
     let [countrySummaryList, setCountrySummaryList] = useState([])
     let [country, setCountry] = useState({});

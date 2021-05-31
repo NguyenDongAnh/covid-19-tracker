@@ -17,8 +17,7 @@ function home() {
 ReactDOM.render(
   <BrowserRouter>
     <React.StrictMode>
-      <Route exact path="/" component={home} />
-      <Route exact path="/covid-19-tracker" component={App} />
+      <Route exact path="/" component={App} />
     </React.StrictMode>
   </BrowserRouter>,
   document.getElementById('root')
