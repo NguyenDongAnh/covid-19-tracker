@@ -37,6 +37,13 @@
     margin: 10px !important;
 }
 
+.mr-05 {
+    margin-right: 5px;
+}
+.mf-05 {
+    margin-left: 5px;
+}
+
 .f-width {
     width: 100%;
 }

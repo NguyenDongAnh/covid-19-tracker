@@ -8,7 +8,7 @@ import {
 import Pagination from './Pagination'
 export default function TableStatisticsWorld({ world }) {
     let [currentTable, setCurrentTable] = useState(1);
-    let [rowsPerTable] = useState(15)
+    let [rowsPerTable] = useState(10)
 
     const indexOfLastRow = currentTable * rowsPerTable;
     const indextOfFirstRow = indexOfLastRow - rowsPerTable;

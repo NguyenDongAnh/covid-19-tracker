@@ -1,5 +1,5 @@
 import axios from 'axios'
-
+import { getDaysRange } from './services'
 const getData = (url) => {
     let config = {
         method: 'get',
@@ -48,22 +48,16 @@ const getDataDayOneTotalAllStatus = (country) => {
     let end_point = `total/dayone/country/${country}`
     return getData(end_point);
 }
-
-const getDaysRange = (days) => {
-    let d = new Date()
-
-    let from_d = new Date(d.getTime() - (days * 24 * 60 * 60 * 1000))
-
-    let to_date = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
-
-    let from_date = `${from_d.getFullYear()}-${from_d.getMonth() + 1}-${from_d.getDate()}`
-
-    return {
-        start_date: from_date,
-        end_date: to_date
-    }
+const getWorldDay = (days) => {
+    let date = getDaysRange(days)
+    let end_point = `world?from=${date.start_date}&to=${date.end_date}`
+    return getData(end_point);
 }
-
+const getCountryDay = (days,country) => {
+    let date = getDaysRange(days)
+    let end_point = `country/${country}?from=${date.start_date}&to=${date.end_date}`
+    return getData(end_point);
+}
 export {
     getDataDefault,
     getDataSummary,
@@ -73,5 +67,7 @@ export {
     getDataDayOneTotal,
     getDataDayOneLive,
     getDataDayOneTotalAllStatus,
-    getDataWorldAllTimeCases
+    getDataWorldAllTimeCases,
+    getWorldDay,
+    getCountryDay
 }

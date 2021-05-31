@@ -12,7 +12,10 @@ import {
     getDataDayOneAllStatus,
     getDataDayOneLive,
     getDataDayOneTotal,
-    getDataWorldAllTimeCases
+    getDataWorldAllTimeCases,
+    getWorldDay,
+    getCountryDay
+
 } from '../fetchAPI';
 import {
     numberWithCommas,
@@ -27,14 +30,72 @@ import TableStatisticsWorld from '../views/TableStatisticsWorld';
 import Counter from '../views/Counter';
 let renderCount = 0
 
+const renderConfirmedCountry = (data) => {
+    let dataCase = [];
+    data.map(element => {
+        dataCase.push(element.Confirmed);
+    })
+    return dataCase;
+}
+const renderRecoveredCountry = (data) => {
+    let dataCase = [];
+    data.map(element => dataCase.push(element.Recovered))
+    return dataCase;
+}
+const renderDeathsCountry = (data) => {
+    let dataCase = [];
+    data.map(element => dataCase.push(element.Deaths))
+    return dataCase
+}
+const renderConfirmedWorld = (data) => {
+    let dataCase = [];
+    data.map(element => {
+        dataCase.push(element.TotalConfirmed);
+    })
+    return dataCase;
+}
+const renderRecoveredWorld = (data) => {
+    let dataCase = [];
+    data.map(element => {
+        dataCase.push(element.TotalRecovered);
+    })
+    return dataCase;
+}
+const renderDeathsWorld = (data) => {
+    let dataCase = [];
+    data.map(element => {
+        dataCase.push(element.TotalDeaths);
+    })
+    return dataCase
+}
+
+const renderLabels = (data) => {
+    let labels = [];
+    data.map(element => {
+        labels.push(formatDateTime(new Date(element.Date)));
+    })
+    return labels
+}
+function sortDate(c) {
+    let k = [...c];
+    return k.sort((a, b) => a.Date > b.Date ? 1 : -1)
+}
+function sortConfirmed(c) {
+    let k = [...c];
+    return k.sort((a, b) => a.TotalConfirmed < b.TotalConfirmed ? 1 : -1)
+}
 export default function App() {
     renderCount++;
     console.log(renderCount)
     let [countrySummaryList, setCountrySummaryList] = useState([])
     let [summary, setSummary] = useState({});
-    let [world, setWorld] = useState([])
     let [country, setCountry] = useState({});
+    let [world, setWorld] = useState([])
+    let [world7Days, setWorld7Days] = useState([])
+    let [world30Days, setWorld30Days] = useState([])
     let [dataCountry, setDataCountry] = useState([]);
+    let [dataCountry7Days, setDataCountry7Days] = useState([]);
+    let [dataCountry30Days, setDataCountry30Days] = useState([]);
     let [loading, setLoading] = useState(false);
 
     const startLoading = () => {
@@ -54,13 +115,21 @@ export default function App() {
                     event.preventDefault()
                     startLoading()
                     await setCountry(countrySummaryList[index])
+
                     await getDataDayOneAllStatus(countrySummaryList[index].Slug)
                         .then(async (response) => {
-                            let dataCountry = await response
-                            dataCountry = await dataCountry.sort((a, b) => a.Date < b.Date ? 1 : -1)
-                            setDataCountry(dataCountry)
-                            console.log(dataCountry)
+                            await response.sort((a, b) => a.Date < b.Date ? 1 : -1)
+                            setDataCountry(response)
                         }).catch((error) => console.log(error))
+
+                    await getCountryDay(30, row.CountryCode).then(response => {
+                        setDataCountry30Days(response.sort((a, b) => a.Date > b.Date ? 1 : -1))
+                    }).catch(error => console.log(error))
+
+                    await getCountryDay(7, row.CountryCode).then(response => {
+                        setDataCountry7Days(response.sort((a, b) => a.Date > b.Date ? 1 : -1))
+                    }).catch(error => console.log(error))
+
                     endLoading()
                 }}>
                     <div>
@@ -71,40 +140,154 @@ export default function App() {
             )
         }))
     }
+    const renderTopCoutriesAffected = (source) => {
+        return (
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            Country
+                                </th>
+                        <th>
+                            Total Confirmed
+                                </th>
+                        <th>
+                            Total Recovered
+                                </th>
+                        <th>
+                            Total Deaths
+                                </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {source.map(row => {
+                        return (
+                            <tr key={row.ID} id={row.Slug}>
+                                <td>
+                                    <div>
+                                        <img src={row.src} alt={row.Country} />
+                                        {row.Country}
+                                    </div>
+                                </td>
+                                <td>
+                                    {numberWithCommas(row.TotalConfirmed)}
+                                </td>
+                                <td>
+                                    {numberWithCommas(row.TotalRecovered)}
+                                </td>
+                                <td>
+                                    {numberWithCommas(row.TotalDeaths)}
+                                </td>
+                            </tr>
+                        )
+                    })}
+                </tbody>
+            </table>
+        )
+    }
     const setDefault = (event) => {
         event.preventDefault()
         setCountry({})
         setDataCountry([])
+        setDataCountry30Days([])
+        setDataCountry7Days([])
     }
 
-    const dataRecoveryRate = {
-        // Object.keys(country).length !== 0 ? [country.TotalConfirmed, country.TotalRecovered, country.TotalDeaths] : Object.keys(summary).length !== 0 ? [summary.TotalConfirmed, summary.TotalRecovered, summary.TotalDeaths] : [10, 10, 10]
-        // series: [44, 55, 13],
-        // options: {
-        //     chart: {
-        //         width: 350,
-        //         type: 'pie'
-        //     },
-        //     labels: ['Team A', 'Team B', 'Team C'],
-        //     colors:['#ff0000','#008000','#373c43'],
-        // },
-        series: [44, 55, 41, 17, 15],
+    const ratingChart = {
+        series: Object.keys(country).length !== 0 ? [country.TotalConfirmed, country.TotalRecovered, country.TotalDeaths] : Object.keys(summary).length !== 0 ? [summary.TotalConfirmed, summary.TotalRecovered, summary.TotalDeaths] : [10, 10, 10],
         options: {
-          chart: {
-            type: 'donut',
-          },
-          responsive: [{
-            breakpoint: 480,
-            options: {
-              chart: {
-                width: '100%'
-              },
-              legend: {
-                position: 'bottom'
-              }
-            }
-          }]
+            chart: {
+                type: 'donut'
+            },
+            labels: ['Confirmed', 'Recovered', 'Deaths'],
+            legend: { position: "bottom" },
+            colors: ['#ff0000', '#008000', '#373c43'],
         },
+    }
+
+    const allTimeChart = {
+        options: {
+            chart: {
+                type: 'line'
+            },
+            legend: { position: "bottom" },
+            colors: ['#ff0000', '#008000', '#373c43'],
+            xaxis: {
+                categories: dataCountry.length !== 0 ? renderLabels(dataCountry) : world.length !== 0 ? renderLabels(world) : [],
+                labels: {
+                    show: false
+                }
+            },
+            grid: {
+                show: false
+            }
+        },
+        series: [{
+            name: 'Confirmed',
+            data: dataCountry.length !== 0 ? renderConfirmedCountry(sortDate(dataCountry)) : world.length !== 0 ? renderConfirmedWorld(sortDate(world)) : []
+        }, {
+            name: 'Recovered',
+            data: dataCountry.length !== 0 ? renderRecoveredCountry(sortDate(dataCountry)) : world.length !== 0 ? renderRecoveredWorld(sortDate(world)) : []
+        }, {
+            name: 'Confirmed',
+            data: dataCountry.length !== 0 ? renderDeathsCountry(sortDate(dataCountry)) : world.length !== 0 ? renderDeathsWorld(sortDate(world)) : []
+        }]
+    }
+    const last30DaysChart = {
+        options: {
+            chart: {
+                type: 'line'
+            },
+            legend: { position: "bottom" },
+            colors: ['#ff0000', '#008000', '#373c43'],
+            xaxis: {
+                categories: dataCountry30Days.length !== 0 ? renderLabels(dataCountry30Days) : world.length !== 0 ? renderLabels(world30Days) : [],
+                labels: {
+                    show: false
+                }
+            },
+            grid: {
+                show: false
+            }
+        },
+        series: [{
+            name: 'Confirmed',
+            data: dataCountry30Days.length !== 0 ? renderConfirmedCountry(dataCountry30Days) : world30Days.length !== 0 ? renderConfirmedWorld(world30Days) : []
+        }, {
+            name: 'Recovered',
+            data: dataCountry30Days.length !== 0 ? renderRecoveredCountry(dataCountry30Days) : world30Days.length !== 0 ? renderRecoveredWorld(world30Days) : []
+        }, {
+            name: 'Confirmed',
+            data: dataCountry30Days.length !== 0 ? renderDeathsCountry(dataCountry30Days) : world30Days.length !== 0 ? renderDeathsWorld(world30Days) : []
+        }]
+    }
+    const last7DaysChart = {
+        options: {
+            chart: {
+                type: 'line'
+            },
+            legend: { position: "bottom" },
+            colors: ['#ff0000', '#008000', '#373c43'],
+            xaxis: {
+                categories: dataCountry7Days.length !== 0 ? renderLabels(dataCountry7Days) : world7Days.length !== 0 ? renderLabels(world7Days) : [],
+                labels: {
+                    show: false
+                }
+            },
+            grid: {
+                show: false
+            }
+        },
+        series: [{
+            name: 'Confirmed',
+            data: dataCountry7Days.length !== 0 ? renderConfirmedCountry(dataCountry7Days) : world7Days.length !== 0 ? renderConfirmedWorld(world7Days) : []
+        }, {
+            name: 'Recovered',
+            data: dataCountry7Days.length !== 0 ? renderRecoveredCountry(dataCountry7Days) : world7Days.length !== 0 ? renderRecoveredWorld(world7Days) : []
+        }, {
+            name: 'Confirmed',
+            data: dataCountry7Days.length !== 0 ? renderDeathsCountry(dataCountry7Days) : world7Days.length !== 0 ? renderDeathsWorld(world7Days) : []
+        }]
     }
 
     useEffect(async () => {
@@ -115,13 +298,20 @@ export default function App() {
             dataCountries = await dataCountries.sort((a, b) => a.Country > b.Country ? 1 : -1).map(e => new Object({ ...e, src: getSmallCountryFlag(e.CountryCode.toLowerCase()) }))
             setCountrySummaryList(dataCountries)
             setSummary(response.Global)
-            // console.log(response.Countries[0])
-            // console.log(response.Global)
         }).catch(error => console.log(error))
-        await getDataWorldAllTimeCases().then(async response => {
+
+        await getDataWorldAllTimeCases().then(response => {
             setWorld(response.sort((a, b) => a.Date < b.Date ? 1 : -1));
         }).catch(error => console.log(error))
         endLoading()
+
+        await getWorldDay(30).then(response => {
+            setWorld30Days(response.sort((a, b) => a.Date > b.Date ? 1 : -1))
+        }).catch(error => console.log(error))
+
+        await getWorldDay(7).then(response => {
+            setWorld7Days(response.sort((a, b) => a.Date > b.Date ? 1 : -1))
+        }).catch(error => console.log(error))
 
         return () => {
         }
@@ -133,9 +323,9 @@ export default function App() {
             {Object.keys(country).length !== 0 ? <Counter country={country} /> : (Object.keys(summary).length !== 0 ? <Counter country={summary} /> : '')}
             <div className="container f-width">
                 <div className="row">
-                    <div className="col-9 col-md-7 col-sm-12">
+                    <div className="col-8 col-sm-12 m-0">
                         <div className="row m-0">
-                            <div className="col-12 p-0">
+                            <div className="col-12">
                                 <div className="box">
                                     <div className="box-header">
                                         {Object.keys(country).length === 0 ? "Summary Statistics of Countries" : "Statistics of " + country.Country}
@@ -146,7 +336,7 @@ export default function App() {
                                 </div>
                             </div>
                             {dataCountry.length === 0 ?
-                                (<div className="col-12 p-0 m-0">
+                                (<div className="col-12">
                                     <div className="box">
                                         <div className="box-header">
                                             Statistics of World
@@ -157,10 +347,46 @@ export default function App() {
                                     </div>
                                 </div>)
                                 : ''}
+                            <div className="col-12">
+                                <div className="box">
+                                    <div className="box-header">
+                                        Total
+                                    </div>
+                                    <div className="box-body">
+                                        <div className="total-char">
+                                            <ReactApexChart options={allTimeChart.options} series={allTimeChart.series} type="line" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-6 col-md-12">
+                                <div className="box">
+                                    <div className="box-header">
+                                        Last 30 days
+                                    </div>
+                                    <div className="box-body">
+                                        <div className="total-char">
+                                            <ReactApexChart options={last30DaysChart.options} series={last30DaysChart.series} type="line" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-6 col-md-12 ">
+                                <div className="box">
+                                    <div className="box-header">
+                                        Last 7 days
+                                    </div>
+                                    <div className="box-body">
+                                        <div className="total-char">
+                                            <ReactApexChart options={last7DaysChart.options} series={last7DaysChart.series} type="line" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div className="col-3 col-md-5 col-sm-12">
-                        <div className="row sticky-sidebar">
+                    <div className="col-4 col-sm-12 p-0">
+                        <div className="row">
                             <div className="col-12 p-0">
                                 <div className="box">
                                     <div className="box-header">
@@ -177,15 +403,52 @@ export default function App() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="col-12 p-0 m-0">
+                            <div className="col-12 p-0">
                                 <div className="box">
                                     <div className="box-header">
-                                        Recovery Rate
+                                        Top Countries Affected
                                     </div>
                                     <div className="box-body">
-                                        <div className="recovery-rate-chart">
-                                        {/* <ReactApexCharts options={dataRecoveryRate.options} series={dataRecoveryRate.series} type="pie"/> */}
-                                        <ReactApexChart options={dataRecoveryRate.options} series={dataRecoveryRate.series} type="donut" />
+                                        {renderTopCoutriesAffected(sortConfirmed(countrySummaryList).slice(0, 6))}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-12 p-0">
+                                <div className="box">
+                                    <div className="box-header">
+                                        Rating Chart
+                                    </div>
+                                    <div className="box-body">
+                                        <ReactApexChart options={ratingChart.options} series={ratingChart.series} type="donut" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-12 p-0">
+                                <div className="box">
+                                    <div className="box-header">
+                                        How To Protect yourself
+                                    </div>
+                                    <div className="box-body">
+                                        <iframe
+                                            width="100%"
+                                            height="400px"
+                                            src="https://www.youtube.com/embed/6XdjmB4IY3M"
+                                            title="YouTube video player"
+                                            frameborder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowfullscreen>
+                                        </iframe>
+                                        <div className="box-header" style={{marginTop:"15px"}}>
+                                            Corona Music
+                                        </div>
+                                        <div className="box-body">
+                                            <iframe width="100%" height="400"
+                                                src="https://www.youtube.com/embed/BtulL3oArQw"
+                                                title="YouTube video player"
+                                                frameborder="0"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowfullscreen>
+                                            </iframe>
                                         </div>
                                     </div>
                                 </div>

@@ -76,6 +76,7 @@ nav i {
     border-radius: var(--box-border-radius);
     position: relative;
     box-shadow: 5px 5px 10px #c1c2c4;
+    overflow: auto;
 }
 
 .box-header {
@@ -123,10 +124,16 @@ nav i {
     /* width: 50px;
     height: 50px; */
 }
+
 table {
     width: 100%;
     min-width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 10px 0;
+}
+
+.table-spacing{
+    border-spacing: 5px;
 }
 
 table thead tr {
@@ -200,7 +207,7 @@ table td img {
     width: 100%;
 }
 .box .country-menu {
-    max-height: 450px;
+    max-height: 396px;
     overflow-y: auto;
 }
 
@@ -227,31 +234,32 @@ a {
 }
 
 
+.box::-webkit-scrollbar,
+.box .box-body::-webkit-scrollbar,
 .box .country-menu::-webkit-scrollbar {
     width: 0.5em;
+    height: 0.5em;
 }
 
+.box::-webkit-scrollbar-thumb,
+.box .box-body::-webkit-scrollbar-thumb,
 .box .country-menu::-webkit-scrollbar-thumb {
     background-color: #b3b7bb;
     border-radius: 5px;
 }
 
+.box::-webkit-scrollbar-track,
+.box .box-body::-webkit-scrollbar-track,
 .box .country-menu::-webkit-scrollbar-track {
     background: #dfe1e2;
     border-radius: 5px;
 }
 
-.box .recovery-rate-chart {
-    min-height: 300px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow-y: auto;
-}
 
 .sticky-sidebar {
     top: 10px;
     position: sticky;
+    z-index: 97;
 }
 
 .loader {
