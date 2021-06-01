@@ -113,7 +113,7 @@ export default function App() {
             legend: { position: "bottom" },
             colors: ['#ff0000', '#008000', '#373c43'],
             xaxis: {
-                categories: dataCountry.length !== 0 ? renderLabels(dataCountry) : world.length !== 0 ? renderLabels(world) : [],
+                categories: dataCountry.length !== 0 ? renderLabels(sortDate(dataCountry)) : world.length !== 0 ? renderLabels(sortDate(world)) : [],
                 labels: {
                     show: false
                 }
@@ -141,7 +141,7 @@ export default function App() {
             legend: { position: "bottom" },
             colors: ['#ff0000', '#008000', '#373c43'],
             xaxis: {
-                categories: dataCountry30Days.length !== 0 ? renderLabels(dataCountry30Days) : world.length !== 0 ? renderLabels(world30Days) : [],
+                categories: dataCountry30Days.length !== 0 ? renderLabels(sortDate(dataCountry30Days)) : world.length !== 0 ? renderLabels(sortDate(world30Days)) : [],
                 labels: {
                     show: false
                 }
@@ -169,7 +169,7 @@ export default function App() {
             legend: { position: "bottom" },
             colors: ['#ff0000', '#008000', '#373c43'],
             xaxis: {
-                categories: dataCountry7Days.length !== 0 ? renderLabels(dataCountry7Days) : world7Days.length !== 0 ? renderLabels(world7Days) : [],
+                categories: dataCountry7Days.length !== 0 ? renderLabels(sortDate(dataCountry7Days)) : world7Days.length !== 0 ? renderLabels(sortDate(world7Days)) : [],
                 labels: {
                     show: false
                 }
