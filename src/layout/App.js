@@ -129,7 +129,7 @@ export default function App() {
             name: 'Recovered',
             data: dataCountry.length !== 0 ? renderRecoveredCountry(sortDate(dataCountry)) : world.length !== 0 ? renderRecoveredWorld(sortDate(world)) : []
         }, {
-            name: 'Confirmed',
+            name: 'Deaths',
             data: dataCountry.length !== 0 ? renderDeathsCountry(sortDate(dataCountry)) : world.length !== 0 ? renderDeathsWorld(sortDate(world)) : []
         }]
     }
@@ -157,7 +157,7 @@ export default function App() {
             name: 'Recovered',
             data: dataCountry30Days.length !== 0 ? renderRecoveredCountry(dataCountry30Days) : world30Days.length !== 0 ? renderRecoveredWorld(world30Days) : []
         }, {
-            name: 'Confirmed',
+            name: 'Deaths',
             data: dataCountry30Days.length !== 0 ? renderDeathsCountry(dataCountry30Days) : world30Days.length !== 0 ? renderDeathsWorld(world30Days) : []
         }]
     }
@@ -185,7 +185,7 @@ export default function App() {
             name: 'Recovered',
             data: dataCountry7Days.length !== 0 ? renderRecoveredCountry(dataCountry7Days) : world7Days.length !== 0 ? renderRecoveredWorld(world7Days) : []
         }, {
-            name: 'Confirmed',
+            name: 'Deaths',
             data: dataCountry7Days.length !== 0 ? renderDeathsCountry(dataCountry7Days) : world7Days.length !== 0 ? renderDeathsWorld(world7Days) : []
         }]
     }
