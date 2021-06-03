@@ -2,24 +2,37 @@ import React, { useState, useEffect } from "react"
 import {
     numberWithCommas,
     getMediumCountryFlag,
-    formatDateTime
+    formatDateTime,
+    formatTime
 } from "../services"
 
-export default function Counter({ country }) {
+
+function TimeCounter() {
     let [time, setTime] = useState(new Date())
-    function formatTime(time) {
-        return (time.getHours() < 10 ? "0" + time.getHours() : time.getHours()) + ":" + (time.getMinutes() < 10 ? "0" + time.getMinutes() : time.getMinutes()) + ":" + (time.getSeconds() < 10 ? "0" + time.getSeconds() : time.getSeconds())
-    }
 
     useEffect(() => {
-        setInterval(() => {
+        let timer = setInterval(() => {
             setTime(new Date());
         }, 1000)
         return () => {
-            clearInterval();
+            clearInterval(timer);
         }
-    },[])
+    }, [])
 
+    return (
+        <div className="counter">
+            <div className="counter-title">{formatDateTime(time)}</div>
+            <div className="counter-infor deaths-text">
+                <div className="icon">
+                    <i className='bx bx-time'></i>
+                </div>
+                {formatTime(time)}
+            </div>
+        </div>
+    )
+}
+
+export default function Counter({ country }) {
     return (
         <div className="container">
             <div className="row">
@@ -36,7 +49,6 @@ export default function Counter({ country }) {
                             <div className="counter-infor confirmed-text">
                                 <div className="icon">
                                     <i className='bx bxs-virus'></i>
-
                                 </div>
                                 {numberWithCommas(country.TotalConfirmed)}
                             </div>
@@ -71,15 +83,7 @@ export default function Counter({ country }) {
                 </div>
                 <div className="col-3 col-md-6 col-sm-12">
                     <div className="box">
-                        <div className="counter">
-                            <div className="counter-title">{formatDateTime(time)}</div>
-                            <div className="counter-infor deaths-text">
-                                <div className="icon">
-                                    <i className='bx bx-time'></i>
-                                </div>
-                                {formatTime(time)}
-                            </div>
-                        </div>
+                        <TimeCounter/>
                     </div>
                 </div>
             </div>

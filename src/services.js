@@ -15,6 +15,10 @@ const formatDateTime = (date) => {
     return (date.getMonth() + 1) + "/" + (date.getDate()) + "/" + (date.getFullYear());
 }
 
+function formatTime(time) {
+    return (time.getHours() < 10 ? "0" + time.getHours() : time.getHours()) + ":" + (time.getMinutes() < 10 ? "0" + time.getMinutes() : time.getMinutes()) + ":" + (time.getSeconds() < 10 ? "0" + time.getSeconds() : time.getSeconds())
+}
+
 const getDaysRange = (days) => {
     let d = new Date()
 
@@ -84,6 +88,7 @@ function sortConfirmed(c) {
     let k = [...c];
     return k.sort((a, b) => a.TotalConfirmed < b.TotalConfirmed ? 1 : -1)
 }
+
 export{
     numberWithCommas,
     getSmallCountryFlag,
@@ -98,5 +103,6 @@ export{
     renderDeathsWorld,
     renderLabels,
     sortDate,
-    sortConfirmed
+    sortConfirmed,
+    formatTime
 }
